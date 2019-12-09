@@ -1,1 +1,1 @@
- web: gunicorn djangStock.wsgi
+ web: python manage.py
