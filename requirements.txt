@@ -1,4 +1,5 @@
 pandas
+Django
 django
 matplotlib
 psycopg2
@@ -10,5 +11,4 @@ gunicorn
 dj-database-url
 whitenoise
 django-heroku
-django-toolbelt
 bs4
