@@ -40,7 +40,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'stocks.apps.StocksConfig',
-    'djangoStock',
 ]
 
 MIDDLEWARE = [
