@@ -1,8 +1,7 @@
 *.pyc
-*~
+*.swp
 /.vscode
 __pycache__
-my_venv
 db.sqlite3
 .DS_Store
-local_settigs.py
+staticfiles
