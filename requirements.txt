@@ -12,3 +12,4 @@ dj-database-url
 whitenoise
 django-heroku
 bs4
+dj_static
