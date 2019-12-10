@@ -13,6 +13,4 @@ whitenoise
 django-heroku
 bs4
 dj_static
-celery
-redis
 lxml

@@ -32,27 +32,23 @@ def index(request, terms):
     if not Company.objects.filter(code=code):
         return render(request, 'index.html', {'code':code, 'invaild':True})
 
+    get_price(code, year)
     name = Company.objects.get(pk=code).name
     return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term})
 
 
 #全株価を取得
-def get_price(reqest):
-    year = datetime.now().year
-    code_list = Company.objects.values_list('code', flat=True)
-
-    for code in code_list:
-        for each in range(year, 2015, -1):
+def get_price(code, year):
+        for each in range(year, 2016, -1):
             html = urlopen('https://kabuoji3.com/stock/{}/{}/'.format(code, each))
             bsObj = BeautifulSoup(html, features='lxml')
             data = bsObj.findAll('tr')[:0:-1]
 
             for tr in data:
+                td_list = [td.text for td in tr.findAll('td')]
+                date_str = td_list[0]
+                prime = str(code) + ':' + str(date_str)
                 try:
-                    td_list = [td.text for td in tr.findAll('td')]
-                    date_str = td_list[0]
-                    prime = str(code) + ':' + str(date_str)
-
                     price = Price.objects.create(
                         prime=prime,
                         date=datetime.strptime(date_str, '%Y-%m-%d'),
@@ -66,8 +62,9 @@ def get_price(reqest):
                     )              
                 except:
                     break
-        time.sleep(0.5)
-    return redirect(to='../')
+            else:
+                continue
+            break
 
 
 #銘柄一覧を取得
@@ -75,17 +72,16 @@ def get_company(request):
     for page in range(1, 100):
         url =  urlopen('https://kabuoji3.com/stock/?page={}'.format(page))    
         bs = BeautifulSoup(url, features='lxml')
-        
         data = bs.findAll('tr')[1:]
-        for tr in data:
-            try:
-                td_list = list(tr.findAll('td'))
-                names = td_list[0].text.split()
 
-                code = int(names[0])
-                name = ''.join(names[1:])
-                market = td_list[1].text
-        
+        for tr in data:
+            td_list = list(tr.findAll('td'))
+            names = td_list[0].text.split()
+
+            code = int(names[0])
+            name = ''.join(names[1:])
+            market = td_list[1].text
+            try:
                 company = Company.objects.create(
                     code=code,
                     name=name,
@@ -197,16 +193,15 @@ def get_adjust(request):
         data = bsObj.find('table', {'class':'ta1'}).findAll('tr')[1:]
 
         for tr in data:
+            td_list = tr.findAll('td')
+            
+            date = datetime.strptime(td_list[0].text.replace('\n', ''), '%Y/%m/%d')
+            
+            code = int(td_list[2].text)
+            
+            div = td_list[4].text.split(':')
+            constant = float(div[0]) / float(div[1])
             try:
-                td_list = tr.findAll('td')
-                
-                date = datetime.strptime(td_list[0].text.replace('\n', ''), '%Y/%m/%d')
-                
-                code = int(td_list[2].text)
-                
-                div = td_list[4].text.split(':')
-                constant = float(div[0]) / float(div[1])
-
                 if Company.objects.filter(code=code):
                     adjust = Adjust.objects.create(
                         prime=str(date) + ':' + str(code) + ':' + str(constant),
@@ -216,7 +211,7 @@ def get_adjust(request):
                     )
             except:
                 pass
-            time.sleep(0.5)
+        time.sleep(0.5)
 
     #株価併合
     url = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/reverse_stock_split_20064.html')
@@ -232,17 +227,16 @@ def get_adjust(request):
         data = bsObj.find('table', {'class':'ta1'}).findAll('tr')[1:]
         
         for tr in data:
-            try:
-                td_list = tr.findAll('td')
-                
-                mul = re.findall('[0-9]{1,3}', td_list[3].text)
-                constant = float(mul[0]) / float(mul[1])
+            td_list = tr.findAll('td')
             
-                date_str = re.findall('[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}', td_list[4].text)[0]
-                date = datetime.strptime(date_str, '%Y/%m/%d')
-                
-                code = int(td_list[1].text)
-
+            mul = re.findall('[0-9]{1,3}', td_list[3].text)
+            constant = float(mul[0]) / float(mul[1])
+        
+            date_str = re.findall('[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}', td_list[4].text)[0]
+            date = datetime.strptime(date_str, '%Y/%m/%d')
+            
+            code = int(td_list[1].text)
+            try:
                 if Company.objects.filter(code=code):
                     adjust = Adjust.objects.create(
                         prime=str(date) + ':' + str(code) + ':' + str(constant),
@@ -252,5 +246,5 @@ def get_adjust(request):
                     )
             except:
                 pass    
-            time.sleep(0.5)
+        time.sleep(0.5)
     return redirect(to='../')

@@ -34,7 +34,6 @@ coderanges = [str(i) for i in range(1000, 10000, 1000)]
 
 urlpatterns = [
     path('', views.index, {'terms':terms}, name='index'),
-    path('prices/', views.get_price, name='prices'),
     path('plot/<int:code>/<term>.png/', views.plot_chart, {'terms':terms}, name='plot'),
 
     path('adjustments/', views.get_adjust, name='adjustments'),
