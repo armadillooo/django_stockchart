@@ -14,3 +14,5 @@ django-heroku
 bs4
 dj_static
 lxml
+django-storages
+boto3
