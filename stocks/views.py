@@ -150,7 +150,7 @@ def plot_chart(request, code, term, terms):
 
     ax.grid()
 
-    steps = int(len(x_list) / 5)
+    steps = int(len(x_list) / 4)
     ax.set_xticks(x_list[0::steps])
 
     canvas = FigureCanvasAgg(fig)

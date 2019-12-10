@@ -3,11 +3,11 @@ from . import views
 
 #term: [freq, window, period, width]
 terms = {
-    '3month': ['D', 25, 3, 0.8],
-    '6month': ['2D', 25, 6, 1.5],
+    '3month': ['D', 25, 3, 0.7],
+    '6month': ['D', 25, 6, 0.5],
     '1year': ['W', 75, 1, 4.0],
     '2year': ['W', 75, 2, 4.0],
-    '5year': ['M', 200, 5, 12.0],
+    '4year': ['M', 200, 4, 10.0],
     }
 
 markets = [
