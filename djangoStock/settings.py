@@ -27,7 +27,7 @@ SECRET_KEY = '6d@-c@s8)6=yldzd8nl1_l-bwu8rxriywx3ezevg@w4bk&h77y'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['stockchartapplication.herokuapp.com', 'localhost']
 
 
 # Application definition
