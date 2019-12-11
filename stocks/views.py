@@ -109,19 +109,17 @@ def plot_chart(request, code, term, terms):
     '''
     #データの集計(月,年で場合分け)
     freq, window, period, width = terms[term]
-
     end = Price.objects.filter(code=code).last().date
     if term == '3month' or term == '6month':
         start = end - delta(months=period)
     else:
         start = end - delta(years=period)
 
-    query = Price.objects.filter(code=code).filter(date__range=(start,end)).order_by('date')
+    query = Price.objects.filter(code=code).order_by('date')
 
-    array = np.array([[r.date, r.open, r.high, r.low, r.close] for r in query])
+    array = np.array([[r.date, r.open, r.high, r.low, r.close] for r in query.filter(date__range=(start, end))])
 
-    df = pd.DataFrame(array, columns=['date', 'open', 'high', 'low', 'close'])
-    df = df.set_index('date')
+    df = pd.DataFrame(array, columns=['date', 'open', 'high', 'low', 'close']).set_index('date')
     #株式調整
     for row in Adjust.objects.filter(code=code):
         if row.date <= end:
@@ -131,16 +129,14 @@ def plot_chart(request, code, term, terms):
     ohlc_df = df.resample(freq).aggregate(ohlc_dict)
     ohlc_df.index = mdates.date2num(ohlc_df.index)
     ohlc_array = ohlc_df.reset_index().values
-
-    average_list = [[r.date, r.adjust] for r in Price.objects.filter(code=code).order_by('date')]
-    average_df = pd.DataFrame(average_list, columns=['date', 'adjust'])
-    average_df = average_df.set_index('date').rolling(window).mean()
-    average_df = average_df[average_df.index >= start]
+    #移動平均線
+    series = pd.Series({r.date: r.adjust for r in query}).rolling(window).mean()
+    series = series[series.index >= start]
     
     fig, ax = plt.subplots()
 
     mpl_finance.candlestick_ohlc(ax, ohlc_array, width=width)
-    average_df.plot(ax=ax)
+    series.plot(ax=ax)
 
     ax.grid()
 
