@@ -135,6 +135,6 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
+STATICFILES_STORAGE  = 'djangoStock.storage.WhiteNoiseStaticFilesStorage'
 
 django_heroku.settings(locals())
