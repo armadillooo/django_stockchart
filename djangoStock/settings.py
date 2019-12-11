@@ -26,8 +26,10 @@ SECRET_KEY = '6d@-c@s8)6=yldzd8nl1_l-bwu8rxriywx3ezevg@w4bk&h77y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
+#localでは必要ない
+STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
 
-ALLOWED_HOSTS = ['stockchartapplication.herokuapp.com', 'localhost']
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -135,7 +137,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
-
-#DEBUG_PROPAGATE_EXCEPTIONS = True
 
 django_heroku.settings(locals())
