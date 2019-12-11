@@ -26,8 +26,6 @@ SECRET_KEY = '6d@-c@s8)6=yldzd8nl1_l-bwu8rxriywx3ezevg@w4bk&h77y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
-#localでは必要ない
-STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
 
 ALLOWED_HOSTS = ['stockchartapplication.herokuapp.com']
 
@@ -133,9 +131,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
-STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, "static"),
 ]
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.StaticFilesStorage'
 
 django_heroku.settings(locals())
