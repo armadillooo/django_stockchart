@@ -1,6 +1,5 @@
 pandas
 Django
-django
 matplotlib
 psycopg2
 psycopg2-binary
@@ -15,4 +14,4 @@ bs4
 dj_static
 lxml
 django-storages
-boto3
+pytz
