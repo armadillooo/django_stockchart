@@ -118,8 +118,6 @@ def plot_chart(request, code, term, terms):
 
     query = Price.objects.filter(code=code).filter(date__range=(start,end)).order_by('date')
 
-    x_list = [q.date for q in query]
-
     array = np.array([[r.date, r.open, r.high, r.low, r.close] for r in query])
 
     df = pd.DataFrame(array, columns=['date', 'open', 'high', 'low', 'close'])
@@ -146,8 +144,8 @@ def plot_chart(request, code, term, terms):
 
     ax.grid()
 
-    steps = int(len(x_list) / 4)
-    ax.set_xticks(x_list[0::steps])
+    steps = int(len(df.index) / 4)
+    ax.set_xticks(df.index[0::steps])
 
     canvas = FigureCanvasAgg(fig)
     output = io.BytesIO()
