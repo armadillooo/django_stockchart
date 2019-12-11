@@ -25,7 +25,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = '6d@-c@s8)6=yldzd8nl1_l-bwu8rxriywx3ezevg@w4bk&h77y'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['stockchartapplication.herokuapp.com']
 
