@@ -29,7 +29,7 @@ DEBUG = False
 #localでは必要ない
 STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFileStorage'
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['stockchartapplication.herokuapp.com']
 
 
 # Application definition
