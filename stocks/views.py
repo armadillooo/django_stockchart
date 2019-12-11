@@ -37,13 +37,14 @@ def index(request, terms):
     return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term})
 
 
-#全株価を取得
+#株価を取得
 def get_price(code, year):
         for each in range(year, 2016, -1):
             html = urlopen('https://kabuoji3.com/stock/{}/{}/'.format(code, each))
             bsObj = BeautifulSoup(html, features='lxml')
             data = bsObj.findAll('tr')[:0:-1]
 
+            time.sleep(0.5)
             for tr in data:
                 td_list = [td.text for td in tr.findAll('td')]
                 date_str = td_list[0]
@@ -74,6 +75,7 @@ def get_company(request):
         bs = BeautifulSoup(url, features='lxml')
         data = bs.findAll('tr')[1:]
 
+        time.sleep(0.5)
         for tr in data:
             td_list = list(tr.findAll('td'))
             names = td_list[0].text.split()
@@ -89,7 +91,6 @@ def get_company(request):
                 )
             except:
                 pass
-        time.sleep(0.2)
     return redirect(to='../')
 
 
@@ -186,6 +187,7 @@ def get_adjust(request):
         bsObj = BeautifulSoup(html, features='lxml')
         data = bsObj.find('table', {'class':'ta1'}).findAll('tr')[1:]
 
+        time.sleep(0.5)
         for tr in data:
             td_list = tr.findAll('td')
             
@@ -204,8 +206,9 @@ def get_adjust(request):
                         constant=constant,
                     )
             except:
-                pass
-        time.sleep(0.5)
+                break
+        else:
+            continue
 
     #株価併合
     url = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/reverse_stock_split_20064.html')
@@ -220,6 +223,7 @@ def get_adjust(request):
         bsObj = BeautifulSoup(html, features='lxml')
         data = bsObj.find('table', {'class':'ta1'}).findAll('tr')[1:]
         
+        time.sleep(0.5)
         for tr in data:
             td_list = tr.findAll('td')
             
@@ -239,6 +243,7 @@ def get_adjust(request):
                         constant=constant,
                     )
             except:
-                pass    
-        time.sleep(0.5)
+                break  
+        else:
+            continue
     return redirect(to='../')
