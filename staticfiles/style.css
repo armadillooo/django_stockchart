@@ -9,3 +9,17 @@ form {
 h1 {
     color: blue;
 }
+
+header {
+    height: 100px; 
+	width: 100%; 
+    background-color: green;
+    color: white;
+}
+
+footer {
+    height: 100px;
+    width: 100%;
+    background-color: greenyellow;
+    color: white;
+}
