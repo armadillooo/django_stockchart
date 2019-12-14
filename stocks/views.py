@@ -155,7 +155,7 @@ def plot_chart(request, code, term, terms):
     ax.grid()
 
     steps = int(len(df.index) / 4)
-    ax.set_xticks(df.index[::-1][0::steps])
+    ax.set_xticks(df.index[0::steps])
 
     canvas = FigureCanvasAgg(fig)
     output = io.BytesIO()
