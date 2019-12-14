@@ -3,8 +3,10 @@ from django.http import HttpResponse, Http404
 from django.contrib import messages
 from django.core.paginator import Paginator
 from stocks.models import Company, Price, Adjust
+from django.urls import reverse
 
 from urllib.request import urlopen
+from urllib.parse import urlencode
 from bs4 import BeautifulSoup
 import re
 
@@ -32,40 +34,51 @@ def index(request, terms):
     if not Company.objects.filter(code=code):
         return render(request, 'index.html', {'code':code, 'invaild':True})
 
-    get_price(code, year)
+    latest = Price.objects.filter(code=code).last().date
     name = Company.objects.get(pk=code).name
-    return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term})
+    return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term, "latest":latest})
 
 
 #株価を取得
-def get_price(code, year):
-        for each in range(year, 2016, -1):
-            html = urlopen('https://kabuoji3.com/stock/{}/{}/'.format(code, each))
-            bsObj = BeautifulSoup(html, features='lxml')
-            data = bsObj.findAll('tr')[:0:-1]
+def get_price(request):
+    year = datetime.now().year
+    code = request.GET.get('code')
+    term = request.GET.get('term')
 
-            time.sleep(0.5)
-            for tr in data:
-                td_list = [td.text for td in tr.findAll('td')]
-                date_str = td_list[0]
-                prime = str(code) + ':' + str(date_str)
-                try:
-                    price = Price.objects.create(
-                        prime=prime,
-                        date=datetime.strptime(date_str, '%Y-%m-%d'),
-                        code=Company.objects.get(code=code),
-                        open=float(td_list[1]),
-                        high=float(td_list[2]),
-                        low=float(td_list[3]),
-                        close=float(td_list[4]),
-                        volume=float(td_list[5]),
-                        adjust=float(td_list[6]),
-                    )              
-                except:
-                    break
-            else:
-                continue
-            break
+    for each in range(year, 2016, -1):
+        html = urlopen('https://kabuoji3.com/stock/{}/{}/'.format(code, each))
+        bsObj = BeautifulSoup(html, features='lxml')
+        data = bsObj.findAll('tr')[:0:-1]
+
+        time.sleep(0.5)
+        for tr in data:
+            td_list = [td.text for td in tr.findAll('td')]
+            date_str = td_list[0]
+            prime = str(code) + ':' + str(date_str)
+            try:
+                price = Price.objects.create(
+                    prime=prime,
+                    date=datetime.strptime(date_str, '%Y-%m-%d'),
+                    code=Company.objects.get(code=code),
+                    open=float(td_list[1]),
+                    high=float(td_list[2]),
+                    low=float(td_list[3]),
+                    close=float(td_list[4]),
+                    volume=float(td_list[5]),
+                    adjust=float(td_list[6]),
+                )              
+            except:
+                break
+        else:
+            continue
+        break
+    # リダイレクト先のパスを取得する
+    redirect_url = reverse("index")
+    # パラメータのdictをurlencodeする
+    parameters = urlencode({'code':code, 'term':term})
+    # URLにパラメータを付与する
+    url = '{}?{}'.format(redirect_url, parameters)
+    return redirect(url)
 
 
 #銘柄一覧を取得
@@ -91,7 +104,7 @@ def get_company(request):
                 )
             except:
                 pass
-    return redirect(to='../')
+    return redirect("index")
 
 
 #グラフの表示
@@ -209,7 +222,7 @@ def get_adjust(request):
                 break
         else:
             continue
-
+        break
     #株価併合
     url = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/reverse_stock_split_20064.html')
     soup = BeautifulSoup(url, features='lxml')
@@ -246,4 +259,5 @@ def get_adjust(request):
                 break  
         else:
             continue
-    return redirect(to='../')
+        break
+    return redirect(to="index")

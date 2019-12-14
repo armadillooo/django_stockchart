@@ -4,6 +4,7 @@
     {% if not invaild %}
         <h1>Chart: {{code}} {{name}}</h1>
         <h1>Term: {{term}}</h1>
+        <h2>Last Update: {{latest}}</h2>
         <img src="{% url 'plot' code term %}">
         {% for term in terms.keys %}
             <a href="{% url 'index' %}?term={{term}}&code={{code}}">{{term}}</a>
@@ -16,5 +17,6 @@
         <input type=submit value="update graph">
     </form>
     <a href="{% url 'search' %}">企業名から検索</a>
+    <a href="{% url 'get_price' %}?code={{code}}&term={{term}}">株価を更新</a>
 {% endblock %}
 
