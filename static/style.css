@@ -1,14 +1,10 @@
-img {
-    display: block;
-}
+img { display: block; }
 
-form {
-    display: inline;
-}
+form { display: inline; }
 
-h1 {
-    color: red;
-}
+h1 { color: blue; }
+
+h2 { display: inline; }
 
 header {
     height: 100px; 
