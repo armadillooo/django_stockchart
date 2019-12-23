@@ -1,6 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse, Http404
-from django.contrib import messages
+from django.http import HttpResponse
 from django.core.paginator import Paginator
 from stocks.models import Company, Price, Adjust
 from django.urls import reverse
@@ -37,48 +36,6 @@ def index(request, terms):
     latest = Price.objects.filter(code=code).last().date
     name = Company.objects.get(pk=code).name
     return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term, "latest":latest})
-
-
-#株価を取得
-def get_price(request):
-    year = datetime.now().year
-    code = request.GET.get('code')
-    term = request.GET.get('term')
-
-    for each in range(year, 2016, -1):
-        html = urlopen('https://kabuoji3.com/stock/{}/{}/'.format(code, each))
-        bsObj = BeautifulSoup(html, features='lxml')
-        data = bsObj.findAll('tr')[:0:-1]
-
-        time.sleep(0.5)
-        for tr in data:
-            td_list = [td.text for td in tr.findAll('td')]
-            date_str = td_list[0]
-            prime = str(code) + ':' + str(date_str)
-            try:
-                price = Price.objects.create(
-                    prime=prime,
-                    date=datetime.strptime(date_str, '%Y-%m-%d'),
-                    code=Company.objects.get(code=code),
-                    open=float(td_list[1]),
-                    high=float(td_list[2]),
-                    low=float(td_list[3]),
-                    close=float(td_list[4]),
-                    volume=float(td_list[5]),
-                    adjust=float(td_list[6]),
-                )              
-            except:
-                break
-        else:
-            continue
-        break
-    # リダイレクト先のパスを取得する
-    redirect_url = reverse("index")
-    # パラメータのdictをurlencodeする
-    parameters = urlencode({'code':code, 'term':term})
-    # URLにパラメータを付与する
-    url = '{}?{}'.format(redirect_url, parameters)
-    return redirect(url)
 
 
 #銘柄一覧を取得
