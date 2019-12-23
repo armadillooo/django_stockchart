@@ -5,7 +5,6 @@
         <h1>Chart: {{code}} {{name}}</h1>
         <h1>Term: {{term}}</h1>
         <h2>Last Update: {{latest}}</h2>
-        <a href="{% url 'get_price' %}?code={{code}}&term={{term}}">株価を更新</a>
         <img src="{% url 'plot' code term %}">
         {% for term in terms.keys %}
             <a href="{% url 'index' %}?term={{term}}&code={{code}}">{{term}}</a>
