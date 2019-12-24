@@ -18,8 +18,7 @@ class SignUpView(generic.CreateView):
 @login_required
 def favorite(request):
     code = request.POST.get('code', 1400)
-    term = request.POST.get('term', '1year')
-    before = request.POST.get('before')
+    before = request.GET.get('before')
     user = request.user
     prime = str(user) + ':' + str(code)
     try:

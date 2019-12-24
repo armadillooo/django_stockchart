@@ -12,7 +12,7 @@
         <td><a href="{% url 'index' %}?code={{c.0}}">{{c.0}}</a></td>     
         <td>{{c.1}}</></td>
         <td>
-            <form action="{% url 'favorite' %}" method="POST">
+            <form action="{% url 'favorite' %}?before={{request.get_full_path}}" method="POST">
                 {% csrf_token %}
                 <input type="hidden" value="{{c.0}}" name="code">
                 <input type="hidden" value="{{request.get_full_path}}" name="before">

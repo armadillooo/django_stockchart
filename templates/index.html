@@ -10,11 +10,9 @@
 <h1>Chart: {{code}} {{name}}</h1>
 <h1>Term: {{term}}</h1>
 <h2>Last Update: {{latest}}</h2>
-<form action="{% url 'favorite' %}" method="POST">
+<form action="{% url 'favorite' %}?before={{request.get_full_path}}" method="POST">
     {% csrf_token %}
     <input type="hidden" value="{{code}}" name="code">
-    <input type="hidden" value="{{term}}" name="term">
-    <input type="hidden" value="{{request.get_full_path}}" name="before">
     {% if is_favorite %}
     <input type="submit" value="お気に入りから削除">
     {% else %}
