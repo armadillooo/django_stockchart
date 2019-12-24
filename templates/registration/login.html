@@ -9,4 +9,5 @@
     <button type="submit" class="submit">Login</button>
     <input type="hidden" name="next" value="{{ next }}"/>
 </form>
+アカウントがないときは: <a href="{% url 'signup' %}">サインアップ</a>
 {% endblock %}
