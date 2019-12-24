@@ -1,0 +1,37 @@
+{% extends 'layout.html' %}
+{% load static %}
+
+{% block body %}
+<h1>マイページ</h1>
+<a href="{% url 'index' %}">戻る</a>
+<table>
+    <th>お気に入り一覧</th>
+    <th>企業名</th>
+    {% for c in content %}
+    <tr> 
+        <td><a href="{% url 'index' %}?code={{c.0}}">{{c.0}}</a></td>     
+        <td>{{c.1}}</></td>
+        <td>
+            <form action="{% url 'favorite' %}" method="POST">
+                {% csrf_token %}
+                <input type="hidden" value="{{c.0}}" name="code">
+                <input type="hidden" value="{{request.get_full_path}}" name="before">
+                <input type="submit" value="削除">
+            </form>
+        </td>
+    </tr>
+    {% endfor %}
+</table>  
+
+<div class="pager">
+    {% if content.has_previous %}
+    <a href="{% url 'my_page' %}?page={{content.previous_page_number}">前へ</a>
+    {% endif %}
+    <span>
+        {{content.number}} / {{content.paginator.num_pages}}
+    </span>
+    {% if content.has_next %}
+    <a href="{% url 'my_page' %}?page={{content.next_page_number}}">次へ</a>
+    {% endif %}
+</div>
+{% endblock %}

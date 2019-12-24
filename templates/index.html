@@ -1,22 +1,38 @@
 {% extends 'layout.html' %}
 {% load static %}
+
 {% block body %}
-    {% if not invaild %}
-        <h1>Chart: {{code}} {{name}}</h1>
-        <h1>Term: {{term}}</h1>
-        <h2>Last Update: {{latest}}</h2>
-        <img src="{% url 'plot' code term %}">
-        {% for term in terms.keys %}
-            <a href="{% url 'index' %}?term={{term}}&code={{code}}">{{term}}</a>
-        {% endfor %}
+{% if user.is_authenticated %}
+<h1>ようこそ！{{ user.username}}さん</h1>
+{% endif %}
+
+{% if not invaild %}
+<h1>Chart: {{code}} {{name}}</h1>
+<h1>Term: {{term}}</h1>
+<h2>Last Update: {{latest}}</h2>
+<form action="{% url 'favorite' %}" method="POST">
+    {% csrf_token %}
+    <input type="hidden" value="{{code}}" name="code">
+    <input type="hidden" value="{{term}}" name="term">
+    <input type="hidden" value="{{request.get_full_path}}" name="before">
+    {% if is_favorite %}
+    <input type="submit" value="お気に入りから削除">
     {% else %}
-        <h1>The code: {{code}} is invaild</h1>
+    <input type="submit" value="お気に入り追加">
     {% endif %}
-    <form action="{% url 'index' %}" method="GET">
-        <input name="code" type="number", value={{code}}>
-        <input type=submit value="update graph">
-    </form>
-    <a href="{% url 'search' %}">企業名から検索</a>
-   
+</form>
+<img src="{% url 'plot' code term %}">
+{% for term in terms.keys %}
+<a href="{% url 'index' %}?term={{term}}&code={{code}}">{{term}}</a>
+{% endfor %}
+{% else %}
+<h1>The code: {{code}} is invaild</h1>
+{% endif %}
+
+<form action="{% url 'index' %}" method="GET">
+    <input name="code" type="number", value={{code}}>
+    <input type=submit value="update graph">
+</form>
+<a href="{% url 'search' %}">企業名から検索</a>
 {% endblock %}
 

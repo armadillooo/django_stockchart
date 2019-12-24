@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from stocks.models import Company, Price, Adjust
+from accounts.models import Favorite
 
 from datetime import datetime
 import time
@@ -28,9 +29,20 @@ def index(request, terms):
     if not Company.objects.filter(code=code):
         return render(request, 'index.html', {'code':code, 'invaild':True})
 
+    is_favorite = False
+    if Favorite.objects.filter(user=request.user, code=code):
+        is_favorite = True
     latest = Price.objects.filter(code=code).last().date
     name = Company.objects.get(pk=code).name
-    return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term, "latest":latest})
+    parse_dict = {
+        'code':code, 
+        'name':name, 
+        'terms':terms, 
+        'term':term, 
+        "latest":latest, 
+        'is_favorite':is_favorite,
+        }
+    return render(request, 'index.html', parse_dict)
 
 
 #グラフの表示
@@ -102,4 +114,12 @@ def show_company(request, markets, coderanges):
 
     paginator = Paginator(result, 50)
     content = paginator.get_page(page)
-    return render(request, 'search.html', {'content':content, 'word':word, 'markets':markets, 'market':market, 'coderanges':coderanges, 'coderange':str(coderange)})
+    parse_dict = {
+        'content':content, 
+        'word':word, 
+        'markets':markets, 
+        'market':market, 
+        'coderanges':coderanges, 
+        'coderange':str(coderange)
+        }
+    return render(request, 'search.html', parse_dict)

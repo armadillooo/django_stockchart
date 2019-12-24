@@ -29,6 +29,7 @@ DEBUG = False
 
 ALLOWED_HOSTS = ['stockchartapplication.herokuapp.com']
 
+LOGIN_REDIRECT_URL = '/'
 
 # Application definition
 
@@ -41,6 +42,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'django_extensions',
     'stocks',
+    'accounts',
 ]
 
 MIDDLEWARE = [

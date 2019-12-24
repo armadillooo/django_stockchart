@@ -1,6 +1,7 @@
 from django.urls import path
 from . import views
 
+
 #term: [freq, window, period, width]
 terms = {
     '3month': ['D', 25, 3, 0.6],

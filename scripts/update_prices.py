@@ -37,13 +37,3 @@ def run():
             else:
                 continue
             break
-
-    '''
-    # リダイレクト先のパスを取得する
-    redirect_url = reverse("index")
-    # パラメータのdictをurlencodeする
-    parameters = urlencode({'code':code, 'term':term})
-    # URLにパラメータを付与する
-    url = '{}?{}'.format(redirect_url, parameters)
-    return redirect(url)
-    '''
