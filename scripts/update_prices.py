@@ -8,6 +8,7 @@ def run():
     year = datetime.now().year
     code_list = [row.code for row in Company.objects.all()]
     for code in code_list:
+        print(code)
         for each in range(year, 2016, -1):
             html = urlopen('https://kabuoji3.com/stock/{}/{}/'.format(code, each))
             bsObj = BeautifulSoup(html, features='lxml')
@@ -18,6 +19,7 @@ def run():
                 td_list = [td.text for td in tr.findAll('td')]
                 date_str = td_list[0]
                 prime = str(code) + ':' + str(date_str)
+                print(date_str)
                 try:
                     price = Price.objects.create(
                         prime=prime,
