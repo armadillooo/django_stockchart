@@ -2,12 +2,6 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.core.paginator import Paginator
 from stocks.models import Company, Price, Adjust
-from django.urls import reverse
-
-from urllib.request import urlopen
-from urllib.parse import urlencode
-from bs4 import BeautifulSoup
-import re
 
 from datetime import datetime
 import time
@@ -20,6 +14,7 @@ import matplotlib.dates as mdates
 import mpl_finance
 from matplotlib.backends.backend_agg import FigureCanvasAgg
 import io
+
 
 #グラフの表示
 def index(request, terms):
@@ -38,32 +33,6 @@ def index(request, terms):
     return render(request, 'index.html', {'code':code, 'name':name, 'terms':terms, 'term':term, "latest":latest})
 
 
-#銘柄一覧を取得
-def get_company(request):
-    for page in range(1, 100):
-        url =  urlopen('https://kabuoji3.com/stock/?page={}'.format(page))    
-        bs = BeautifulSoup(url, features='lxml')
-        data = bs.findAll('tr')[1:]
-
-        time.sleep(0.5)
-        for tr in data:
-            td_list = list(tr.findAll('td'))
-            names = td_list[0].text.split()
-
-            code = int(names[0])
-            name = ''.join(names[1:])
-            market = td_list[1].text
-            try:
-                company = Company.objects.create(
-                    code=code,
-                    name=name,
-                    market=market,
-                )
-            except:
-                pass
-    return redirect("index")
-
-
 #グラフの表示
 def plot_chart(request, code, term, terms):
     ohlc_dict =  {
@@ -72,13 +41,6 @@ def plot_chart(request, code, term, terms):
         'low': 'min',
         'close': 'last'
     }
-    '''
-    freq = 'W'
-    period = 1
-    window = 75
-    width = 4.0
-    '''
-    #データの集計(月,年で場合分け)
     freq, window, period, width = terms[term]
     end = Price.objects.filter(code=code).last().date
     if term == '3month' or term == '6month':
@@ -111,8 +73,9 @@ def plot_chart(request, code, term, terms):
 
     ax.grid()
 
-    steps = int(len(df.index) / 4)
-    ax.set_xticks(df.index[0::steps])
+    x_label = pd.date_range(start, end)
+    steps = int(len(x_label) / 4)
+    ax.set_xticks(x_label[0::steps])
 
     canvas = FigureCanvasAgg(fig)
     output = io.BytesIO()
@@ -140,81 +103,3 @@ def show_company(request, markets, coderanges):
     paginator = Paginator(result, 50)
     content = paginator.get_page(page)
     return render(request, 'search.html', {'content':content, 'word':word, 'markets':markets, 'market':market, 'coderanges':coderanges, 'coderange':str(coderange)})
-
-
-#株価併合、分割のデータの取得
-def get_adjust(request):
-    #株価分割
-    url = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/stock_split_20064.html')
-    soup = BeautifulSoup(url, features='lxml')
-    a_tags = soup.findAll('a', {'href':re.compile('stock.')})[::-1]
-
-    #2015年以降のデータを取得
-    href_list = [a['href'] for a in a_tags if int(re.search('20..', a['href']).group()) >= 2015]
-
-    for href in href_list:
-        html = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/{}'.format(href))
-        bsObj = BeautifulSoup(html, features='lxml')
-        data = bsObj.find('table', {'class':'ta1'}).findAll('tr')[1:]
-
-        time.sleep(0.5)
-        for tr in data:
-            td_list = tr.findAll('td')
-            
-            date = datetime.strptime(td_list[0].text.replace('\n', ''), '%Y/%m/%d')
-            
-            code = int(td_list[2].text)
-            
-            div = td_list[4].text.split(':')
-            constant = float(div[0]) / float(div[1])
-            try:
-                if Company.objects.filter(code=code):
-                    adjust = Adjust.objects.create(
-                        prime=str(date) + ':' + str(code) + ':' + str(constant),
-                        date=date,
-                        code=Company.objects.get(code=code),
-                        constant=constant,
-                    )
-            except:
-                break
-        else:
-            continue
-        break
-    #株価併合
-    url = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/reverse_stock_split_20064.html')
-    soup = BeautifulSoup(url, features='lxml')
-    a_tags = soup.findAll('a', {'href':re.compile('reverse.')})[::-1]
-
-    #2015年以降のデータを取得
-    href_list = [a['href'] for a in a_tags if int(re.search('20..', a['href']).group()) >= 2015]
-
-    for href in href_list:
-        html = urlopen('https://www.rakuten-sec.co.jp/ITS/Companyfile/{}'.format(href))
-        bsObj = BeautifulSoup(html, features='lxml')
-        data = bsObj.find('table', {'class':'ta1'}).findAll('tr')[1:]
-        
-        time.sleep(0.5)
-        for tr in data:
-            td_list = tr.findAll('td')
-            
-            mul = re.findall('[0-9]{1,3}', td_list[3].text)
-            constant = float(mul[0]) / float(mul[1])
-        
-            date_str = re.findall('[0-9]{4}/[0-9]{1,2}/[0-9]{1,2}', td_list[4].text)[0]
-            date = datetime.strptime(date_str, '%Y/%m/%d')
-            
-            code = int(td_list[1].text)
-            try:
-                if Company.objects.filter(code=code):
-                    adjust = Adjust.objects.create(
-                        prime=str(date) + ':' + str(code) + ':' + str(constant),
-                        date=date,
-                        code=Company.objects.get(code=code),
-                        constant=constant,
-                    )
-            except:
-                break  
-        else:
-            continue
-        break
-    return redirect(to="index")
