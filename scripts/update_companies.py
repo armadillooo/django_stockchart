@@ -14,6 +14,7 @@ def run():
         bs = BeautifulSoup(url, features='lxml')
         data = bs.findAll('tr')[1:]
 
+        print(page)
         time.sleep(0.5)
         for tr in data:
             td_list = list(tr.findAll('td'))
@@ -28,5 +29,6 @@ def run():
                     name=name,
                     market=market,
                 )
+                print('--' + str(code))
             except:
                 pass
