@@ -1,7 +1,13 @@
 {% extends 'layout.html' %}
 {% load static %}
 
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}">
+{% endblock %}
+
 {% block body %}
-<h1>Logged Out</h1>
-<p><a href="{% url 'index' %}">トップページに戻る</a></p>
+<div class="caption">
+<h1>Logout</h1>
+</div>
+<p class="message"><a href="{% url 'index' %}">back to home</a></p>
 {% endblock %}

@@ -1,0 +1,45 @@
+* {
+    margin: 0;
+    padding: 0;
+}
+
+nav ul li {display: inline;}
+
+header {
+    height: 100px;
+    width: 100%;
+    padding: 15px 0;
+    background-color: green;
+    color: white;
+}
+header h1 {
+    line-height: 100px;
+    float: left;
+    font-size: 30px;
+    margin-left: 100px;
+}
+nav {
+    line-height: 100px;
+    float: right;
+    margin-right: 30px;
+    list-style: none;
+}
+nav li {
+    list-style: none;
+    display: inline-block;
+    margin: 0 20px;
+  }
+nav a {
+    text-decoration: none;
+    color: orange;
+}
+
+.caption { padding: 20px;}
+.caption h1 {color: darkgreen;}
+
+a {text-decoration: none;}
+
+.list {text-align: center;}
+.list table {margin: auto;}
+.pager {padding: 10px;}
+

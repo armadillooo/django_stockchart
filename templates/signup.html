@@ -1,11 +1,17 @@
 {% extends 'layout.html' %}
 {% load static %}
- 
+
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}">
+{% endblock %}
+
 {% block body %}
-<h1>Sign up</h1>
+<div class="caption">
+<h1>Sign Up</h1>
+</div>
     <form method="post">
         {% csrf_token %}
         {{ form.as_p }}
-        <button type="submit" class="submit">Sign up</button>
+        <button type="submit" class="submit">sign up</button>
     </form>
 {% endblock %}

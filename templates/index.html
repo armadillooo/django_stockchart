@@ -1,36 +1,41 @@
 {% extends 'layout.html' %}
 {% load static %}
 
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/index.css' %}">
+{% endblock %}
+
 {% block body %}
-{% if user.is_authenticated %}
-<h1>ようこそ！{{ user.username}}さん</h1>
-{% endif %}
-
-{% if not invaild %}
-<h1>Chart: {{code}} {{name}}</h1>
-<h1>Term: {{term}}</h1>
-<h2>Last Update: {{latest}}</h2>
-<form action="{% url 'favorite' %}?before={{request.get_full_path}}" method="POST">
-    {% csrf_token %}
-    <input type="hidden" value="{{code}}" name="code">
-    {% if is_favorite %}
-    <input type="submit" value="お気に入りから削除">
+<div class="caption">
+    {% if not invaild %}
+    <h1>Chart: {{code}} {{name}}</h1>
+    <h1>Term: {{term}}</h1>
+    <h2>Last Update: {{latest}}</h2>
     {% else %}
-    <input type="submit" value="お気に入り追加">
+    <h1>The code: {{code}} is invaild</h1>
     {% endif %}
-</form>
-<img src="{% url 'plot' code term %}">
-{% for term in terms.keys %}
-<a href="{% url 'index' %}?term={{term}}&code={{code}}">{{term}}</a>
-{% endfor %}
-{% else %}
-<h1>The code: {{code}} is invaild</h1>
-{% endif %}
-
-<form action="{% url 'index' %}" method="GET">
-    <input name="code" type="number", value={{code}}>
-    <input type=submit value="update graph">
-</form>
-<a href="{% url 'search' %}">企業名から検索</a>
+</div>
+<a href="{% url 'search' %}" class="search-url">search from stock names</a>
+<div class="chart">
+    {% if not invaild %}
+    <img src="{% url 'plot' code term %}">
+    {% for term in terms.keys %}
+    <a href="{% url 'index' %}?term={{term}}&code={{code}}">{{term}}</a>
+    {% endfor %}
+    {% endif %}
+    <form action="{% url 'index' %}" method="GET" class="btn update-btn">
+        <input name="code" type="number", value={{code}}>
+        <input type=submit value="update graph">
+    </form>
+    <form action="{% url 'favorite' %}?before={{request.get_full_path}}" method="POST" class="btn favorite-btn">
+        {% csrf_token %}
+        <input type="hidden" value="{{code}}" name="code">
+        {% if not is_favorite %}
+        <input type="submit" value="add to favorite list">
+        {% else %}
+        <input type="submit" value="delete from favorite list">
+        {% endif %}
+    </form>
+</div>
 {% endblock %}
 

@@ -1,0 +1,12 @@
+img {
+    display: block;
+    margin: 0 auto;
+}
+
+.update-btn {display: inline;}
+
+.chart {text-align: center;}
+
+.favorite-btn { padding: 30px;}
+
+.search-url {padding: 20px;}

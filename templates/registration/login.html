@@ -1,13 +1,19 @@
 {% extends 'layout.html' %}
 {% load static %}
 
+{% block head %}
+<link rel="stylesheet" type="text/css" href="{% static 'css/form.css' %}">
+{% endblock %}
+
 {% block body %}
+<div class="caption">
 <h1>Login</h1>
+</div>
 <form method="post" action="{% url 'login' %}">
     {% csrf_token %}
     {{ form.as_p }}
     <button type="submit" class="submit">Login</button>
     <input type="hidden" name="next" value="{{ next }}"/>
 </form>
-アカウントがないときは: <a href="{% url 'signup' %}">サインアップ</a>
+<p class="message">create new account from : <a href="{% url 'signup' %}">Sign Up</a><p>
 {% endblock %}

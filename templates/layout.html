@@ -2,12 +2,28 @@
 <!DOCTYPE html>
 <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="{% static 'style.css' %}">
+        {% block head %}{% endblock %}
+        <link rel="stylesheet" type="text/css" href="{% static 'css/style.css' %}">
         <meta charset="utf-8">
-        <title>ローソクチャート表示アプリケーション</title>
+        <title>stock chart application</title>
     </head>
+    <header>
+        <h1>stockchart application</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'index' %}">home </a></li>
+                <li><a href="{% url 'search' %}">stock list</a></li>
+                <li><a href="{% url 'signup' %}">sign up </a></li>
+                {% if user.is_authenticated %}
+                <li><a href="{% url 'my_page' %}">my page</a></li>
+                <li><a href="{% url 'logout' %}">logout</a></li>
+                {% else %}
+                <li><a href="{% url 'login' %}">login</a></li>
+                {% endif %}
+            </ul>
+        </nav>
+    </header>
     <body>
-        {% block body %}
-        {% endblock %}
+        {% block body %}{% endblock %}
     </body>
 </html>

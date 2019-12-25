@@ -2,56 +2,58 @@
 {% load static %}
 
 {% block body %}
+<div class="caption">
 <h1>Stock Serch</h1>
-<a href="{% url 'index' %}">戻る</a>
-
-<form action="{% url 'search' %}" method="GET">
-    <input name="word" type="text", value="{{word}}">
-    <select name="market">
-        <option value="">指定しない</option>
-        {% for m in markets %}
-        {% if m == market %}
-            <option selected>{{m}}</option>
-        {% else %}
-            <option>{{m}}</option>
-        {% endif %}
-        {% endfor %}
-    </select>
-    <select name="coderange">
-            <option value=''>指定しない</option>
-            {% for c in coderanges %}
-            {% if c == coderange %}
-                <option selected value="{{c}}">{{c}}~</option>
+</div>
+<div class="list company-list">
+    <form action="{% url 'search' %}" method="GET">
+        <input name="word" type="text", value="{{word}}">
+        <select name="market">
+            <option value="">market</option>
+            {% for m in markets %}
+            {% if m == market %}
+                <option selected>{{m}}</option>
             {% else %}
-                <option value="{{c}}">{{c}}~</option>
+                <option>{{m}}</option>
             {% endif %}
             {% endfor %}
         </select>
-    <input type=submit value="search">
-</form>
+        <select name="coderange">
+                <option value=''>code</option>
+                {% for c in coderanges %}
+                {% if c == coderange %}
+                    <option selected value="{{c}}">{{c}}~</option>
+                {% else %}
+                    <option value="{{c}}">{{c}}~</option>
+                {% endif %}
+                {% endfor %}
+            </select>
+        <input type=submit value="search">
+    </form>
 
-<table>
-    <th>証券コード</th>
-    <th>企業名</th>
-    <th>取引市場</th>
-    {% for row in content %}
-    <tr> 
-        <td><a href="{% url 'index' %}?code={{row.code}}">{{row.code}}</a></td>
-        <td>{{row.name}}</td> 
-        <td>{{row.market}}</td>            
-    </tr>
-    {% endfor %}
-</table>  
+    <table>
+        <th>Code</th>
+        <th>Company</th>
+        <th>Market</th>
+        {% for row in content %}
+        <tr> 
+            <td><a href="{% url 'index' %}?code={{row.code}}">{{row.code}}</a></td>
+            <td>{{row.name}}</td> 
+            <td>{{row.market}}</td>            
+        </tr>
+        {% endfor %}
+    </table>  
 
-<div class="pager">
-    {% if content.has_previous %}
-    <a href="{% url 'search' %}?page={{content.previous_page_number}}&word={{word}}&market={{market}}&coderange={{coderange}}">前へ</a>
-    {% endif %}
-    <span>
-        {{content.number}} / {{content.paginator.num_pages}}
-    </span>
-    {% if content.has_next %}
-    <a href="{% url 'search' %}?page={{content.next_page_number}}&word={{word}}&market={{market}}&coderange={{coderange}}">次へ</a>
-    {% endif %}
+    <div class="pager">
+        {% if content.has_previous %}
+        <a href="{% url 'search' %}?page={{content.previous_page_number}}&word={{word}}&market={{market}}&coderange={{coderange}}">prev</a>
+        {% endif %}
+        <span>
+            {{content.number}} / {{content.paginator.num_pages}}
+        </span>
+        {% if content.has_next %}
+        <a href="{% url 'search' %}?page={{content.next_page_number}}&word={{word}}&market={{market}}&coderange={{coderange}}">next</a>
+        {% endif %}
+    </div>
 </div>
 {% endblock %}
